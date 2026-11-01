@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String      @id @default(cuid())
+  email     String      @unique
+  password  String
+  createdAt DateTime    @default(now())
+  workspace Workspace[]
+}
+
+model Workspace {
+  id            String         @id @default(cuid())
+  name          String
+  userId        String
+  user          User           @relation(fields: [userId], references: [id])
+  apiKeys       ApiKey[]
+  templates     Template[]
+  notifications Notification[]
+  createdAt     DateTime       @default(now())
+}
+
+model ApiKey {
+  id          String    @id @default(cuid())
+  workspaceId String
+  name        String
+  keyHash     String    @unique
+  prefix      String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  createdAt   DateTime  @default(now())
+}
+
+model Template {
+  id            String         @id @default(cuid())
+  workspaceId   String
+  name          String
+  channel       String // "email" | "sms" | "webhook"
+  subject       String? // optional
+  body          String
+  version       Int            @default(1)
+  workspace     Workspace      @relation(fields: [workspaceId], references: [id])
+  notifications Notification[]
+  createdAt     DateTime       @default(now())
+}
+
+model Notification {
+  id          String          @id @default(cuid())
+  workspaceId String
+  templateId  String?
+  channel     String
+  recipient   String
+  payload     Json
+  status      String          @default("pending")
+  attempts    Int             @default(0)
+  workspace   Workspace       @relation(fields: [workspaceId], references: [id])
+  template    Template?       @relation(fields: [templateId], references: [id])
+  events      DeliveryEvent[]
+  createdAt   DateTime        @default(now())
+}
+
+model DeliveryEvent {
+  id                String  @id @default(cuid())
+  notificationId    String
+  status            String
+  provider          String?
+  providerMsgId     String?
+  errorCode         String?
+  errorMessage      String?
+  metadata          Json?
+  channel           String?
+  recipientDomain   String?
+  recipientAreaCode String?
+  hourOfDayUtc      Int?
+
+  createdAt    DateTime     @default(now())
+  notification Notification @relation(fields: [notificationId], references: [id])
+
+  @@index([notificationId])
+  @@index([recipientDomain, createdAt])
+  @@index([channel, createdAt])
+  @@index([hourOfDayUtc])
+}
