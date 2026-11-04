@@ -18,7 +18,7 @@ export const loginUser = async (email: string, password: string) => {
 
 export const registerUser= async(email:string, password:string) =>{
     const existingUser= await prisma.user.findUnique({where:{email}});
-    if(!existingUser) throw new Error('user already exists');
+    if(existingUser) throw new Error('user already exists');
 
     const hashedPassword= await hashPassword(password);
     const user= await prisma.user.create({
@@ -31,7 +31,7 @@ export const registerUser= async(email:string, password:string) =>{
 
 const generateTokens= async(userId:string) =>{
     const accessToken= generateAccessToken(userId);
-    const refreshToken= generateAccessToken(userId);
+    const refreshToken= generateRefreshToken(userId);
 
     const tokenHash= await hashPassword(refreshToken);
 
