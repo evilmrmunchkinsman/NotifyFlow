@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { createNewWorkspace, listWorkspaces, generateApiKey } from './workspaces.controller';
-import { authenticate } from '../../middleware/auth.middleware.js';
+import { authenticate } from '../../middleware/auth.middleware';
 
 const router = Router();
 
