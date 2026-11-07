@@ -8,7 +8,7 @@ export const createNotification= async(workspaceId:string, data:any) =>{
             workspaceId:workspaceId,
             templateId:data.templateId,
             channel:data.channel,
-            recipient:data.recepient,
+            recipient:data.recipient,
             payload:data.payload,
             status:'pending',
         },

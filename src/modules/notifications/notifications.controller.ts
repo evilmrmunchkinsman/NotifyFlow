@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 const notificationSchema= z.object({
     templateId: z.string().min(1),
-    recipient: z.string().email,
+    recipient: z.string().min(1),
     channel:z.enum(['email','sms']),
     payload:z.record(z.string(),z.any()),
 });
