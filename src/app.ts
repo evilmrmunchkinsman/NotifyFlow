@@ -4,6 +4,8 @@ import authRoutes from './modules/auth/auth.routes';
 import workspaceRoutes from './modules/workspaces/workspaces.routes';
 import templateRoutes from './modules/templates/templates.routes'; 
 import notificationRoutes from './modules/notifications/notifications.routes';
+import trackingRoutes from './modules/tracking/tracking.routes';
+import intelligenceRoutes from './modules/intelligence/intelligence.routes'; 
 
 const app = express();
 
@@ -18,5 +20,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/workspaces', workspaceRoutes);
 app.use('/api/templates', templateRoutes); 
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/webhooks', trackingRoutes);
+app.use('/api/intelligence', intelligenceRoutes);
 
 export default app;
