@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
-import { createNotification } from './notifications.service';
+import { createNotification,getNotifications } from './notifications.service';
 import { z } from 'zod';
+
 
 const notificationSchema= z.object({
     templateId: z.string().min(1),
@@ -25,3 +26,18 @@ export const sendNotification= async(req:Request, res:Response) =>{
     return res.status(400).json({ error: error.message });
   }
 }
+
+
+export const listNotifications = async (req: Request, res: Response) => {
+  try {
+    const workspaceId = (req as any).workspace.id;
+    const status = req.query.status as string | undefined;
+    const channel = req.query.channel as string | undefined;
+
+    const notifications = await getNotifications(workspaceId, status, channel);
+    
+    return res.status(200).json(notifications);
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
+  }
+};
