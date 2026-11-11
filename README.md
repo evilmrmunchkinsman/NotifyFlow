@@ -1,3 +1,4 @@
+
 <div align="center">
 
 # NotifyFlow
@@ -10,7 +11,7 @@
 [![Redis](https://img.shields.io/badge/Redis-Upstash-red?logo=redis)](https://upstash.com/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-[Live Demo](#) · [API Docs](#api-reference) · [Report Bug](issues)
+[Live Demo](https://notifyflow-4yix.onrender.com/health) · [API Docs](#api-reference)
 
 </div>
 
@@ -22,69 +23,29 @@ Most notification services tell you a delivery failed. They don't tell you that 
 
 **NotifyFlow fixes that.**
 
-Send notifications across email, SMS, and webhooks through one API. Every delivery event is tracked in an immutable audit log. Failure patterns are detected automatically and explained by an AI layer — in technical terms for engineers, plain English for founders, or brutally honest roast mode when you need to hear it straight.
+Send notifications across email and SMS through one API. Every delivery event is tracked in an immutable audit log. Failure patterns are detected automatically and explained by an AI layer — in technical terms for engineers, plain English for founders, or brutally honest roast mode when you need to hear it straight.
 
 ---
 
-## Demo
+## 📸 Endpoint Screenshots
 
-> **Sending a notification**
+**1. Sending a Notification (Returns `201 Created` instantly, queue processes in background)**
+<img width="715" height="302" alt="3ca9d35d-d3cb-4ef0-aee8-e4c06a563fa4" src="https://github.com/user-attachments/assets/88066b88-c259-464f-8c30-2bbfb3ae0de4" />
+<img width="704" height="330" alt="c1722a18-5325-4fd7-a999-74133513e828" src="https://github.com/user-attachments/assets/3e539b16-4775-49a5-9f24-343845c81d03" />
+<img width="715" height="358" alt="567a06bd-e410-4bd2-b3ee-3bac40966e23" src="https://github.com/user-attachments/assets/de56f21b-a202-4208-af16-cb482a434bae" />
+<img width="719" height="411" alt="b986d53f-c908-4abc-8b19-9584f6e01bd7" src="https://github.com/user-attachments/assets/9c05ccf5-3c94-4652-9f78-ffbaa60d86aa" />
+<img width="607" height="401" alt="15568a5c-a13a-4e4a-aa85-03c85a6506de" src="https://github.com/user-attachments/assets/f24efe7b-e41d-4029-9aaa-910e9a5a9453" />
+![Send Notification Endpoint](assets/send-endpoint.png)
 
-```bash
-curl -X POST https://notifyflow.onrender.com/notifications/send \
-  -H "Authorization: Bearer nf_live_your_api_key" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "channel": "email",
-    "recipient": "user@example.com",
-    "templateId": "welcome-email",
-    "payload": { "name": "Rahul" }
-  }'
-```
+**2. Listing Notifications with Filters (Querying by status)**
+<img width="701" height="666" alt="f16c683f-faa4-41ea-8af1-6a0a86807371" src="https://github.com/user-attachments/assets/540196e8-d367-494b-8577-c557afcd60a3" />
 
-```json
-{
-  "id": "clx9abc123",
-  "status": "pending",
-  "channel": "email",
-  "recipient": "user@example.com",
-  "message": "Notification queued for delivery"
-}
-```
+![Get Notifications Endpoint](assets/get-endpoint.png)
 
-> **Checking for failure patterns**
+**3. Intelligence & AI Layer (Roast Mode detecting a bounce cluster)**
+<img width="736" height="654" alt="753d1d4d-852d-4c31-98e8-454248289c26" src="https://github.com/user-attachments/assets/f21052de-3f92-4d54-a1d6-50b2ad07f812" />
 
-```bash
-curl https://notifyflow.onrender.com/analytics/ws_abc123/patterns?mode=engineer \
-  -H "Authorization: Bearer <jwt_token>"
-```
-
-```json
-{
-  "detectedAt": "2026-11-11T10:30:00.000Z",
-  "patternCount": 1,
-  "patterns": [
-    {
-      "type": "BOUNCE_CLUSTER",
-      "severity": "critical",
-      "description": "High bounce rate detected for domain: yahoo.com",
-      "evidence": [
-        "47 bounces from yahoo.com in the last hour",
-        "Likely cause: stale or invalid email addresses"
-      ],
-      "explanation": {
-        "summary": "Your yahoo.com recipients are hard-bouncing at an abnormal rate.",
-        "rootCause": "47 hard bounces in 60 minutes from a single domain indicates your contact list contains stale or invalid yahoo.com addresses. Yahoo's mail servers permanently reject these without a retry.",
-        "immediateAction": "Pause sending to yahoo.com recipients and run your list through an email validation service (ZeroBounce, NeverBounce) before resuming.",
-        "preventionTip": "Implement double opt-in and set up automated list hygiene to remove addresses after two consecutive hard bounces.",
-        "confidence": "HIGH"
-      }
-    }
-  ]
-}
-```
-
-<!-- SCREENSHOT: paste a terminal screenshot of the above response here -->
+![AI Pattern Detection Endpoint](assets/ai-roast.png)
 
 ---
 
@@ -92,16 +53,17 @@ curl https://notifyflow.onrender.com/analytics/ws_abc123/patterns?mode=engineer 
 
 | Feature | Description |
 |---------|-------------|
-| **Multi-channel delivery** | Email (Resend), SMS (Fast2SMS), webhooks through one unified API |
+| **Multi-channel delivery** | Email (Resend), SMS (Fast2SMS) through one unified API |
 | **Async queue processing** | BullMQ + Redis — API returns instantly, delivery happens in background |
 | **Automatic retries** | Exponential backoff on failure — 1s → 5s → 30s → dead-letter queue |
 | **Immutable audit trail** | Every status change logged as a DeliveryEvent — provider accepted, delivered, bounced, failed |
-| **Provider callbacks** | Resend and Fast2SMS webhook receivers update delivery status in real time |
+| **Provider callbacks** | Resend webhook receivers update delivery status in real time |
 | **Multi-tenant workspaces** | Scoped API keys, templates, and notifications per workspace |
 | **Hashed API keys** | SHA-256 hashed, shown once on creation — same pattern as Stripe and Resend |
 | **Template versioning** | Reusable templates with `{{placeholder}}` syntax, version increments on update |
 | **Failure pattern detection** | Rule-based analysis — BOUNCE_CLUSTER, PROVIDER_OUTAGE, RATE_LIMIT_HIT |
-| **AI explanations** | Detected patterns explained by Gemini API in four modes |
+| **AI explanations** | Detected patterns explained by Groq API in four modes |
+| **Idempotency** | Prevent duplicate sends if the client accidentally sends the same request twice |
 
 ---
 
@@ -118,10 +80,8 @@ Same failure data. Four completely different outputs based on who's reading it.
 
 ```bash
 # Change the mode in the query param
-GET /analytics/:workspaceId/patterns?mode=roast
+GET /api/intelligence/analyze/:workspaceId?mode=roast
 ```
-
-<!-- SCREENSHOT: paste a comparison of the same pattern explained in engineer vs roast mode -->
 
 ---
 
@@ -157,7 +117,7 @@ Client Request
            ▼
 ┌─────────────────────┐
 │   Intelligence      │  Pattern detection over DeliveryEvents
-│   Layer (Layer 5)   │  → AI explanation via Gemini API
+│   Layer (Layer 5)   │  → AI explanation via Groq API
 └─────────────────────┘
 ```
 
@@ -176,8 +136,6 @@ User
 
 Every `Notification` has a full timeline of `DeliveryEvent` records — one for each status change. This append-only pattern is what makes failure pattern detection possible.
 
-<!-- SCREENSHOT: Prisma Studio or DB view showing a Notification with its DeliveryEvent trail -->
-
 ---
 
 ## Tech Stack
@@ -192,10 +150,9 @@ Every `Notification` has a full timeline of `DeliveryEvent` records — one for 
 | Queue | BullMQ |
 | Cache | Redis via [Upstash](https://upstash.com) |
 | Email | [Resend](https://resend.com) |
-| SMS | [Fast2SMS](https://fast2sms.com) (India) |
-| AI | Google Gemini API |
+| SMS | [Fast2SMS](https://fast2sms.com) |
+| AI | [Groq API](https://groq.com) |
 | Auth | JWT + refresh token rotation |
-| Testing | Jest + Supertest |
 | Deployment | [Render](https://render.com) |
 
 ---
@@ -209,7 +166,7 @@ Every `Notification` has a full timeline of `DeliveryEvent` records — one for 
 - An [Upstash](https://upstash.com) account — free Redis
 - A [Resend](https://resend.com) account — free email tier
 - A [Fast2SMS](https://fast2sms.com) account — free SMS credits (India)
-- A [Google AI Studio](https://aistudio.google.com) API key — free Gemini access
+- A [Groq](https://console.groq.com) API key
 
 ### Installation
 
@@ -232,9 +189,7 @@ REDIS_URL=rediss://...
 
 # Auth
 JWT_SECRET=your_long_random_secret
-JWT_REFRESH_SECRET=another_long_random_secret
-JWT_EXPIRES_IN=15m
-JWT_REFRESH_EXPIRES_IN=7d
+REFRESH_SECRET=another_long_random_secret
 
 # Email
 RESEND_API_KEY=re_...
@@ -243,7 +198,7 @@ RESEND_API_KEY=re_...
 FAST2SMS_API_KEY=...
 
 # AI
-GEMINI_API_KEY=...
+GROQ_API_KEY=...
 
 PORT=3000
 ```
@@ -254,11 +209,8 @@ PORT=3000
 # Run database migrations
 npx prisma migrate dev
 
-# Start the API server
+# Start the API server (this also starts the BullMQ worker)
 npm run dev
-
-# Start the worker (separate terminal)
-npm run worker
 ```
 
 The API will be running at `http://localhost:3000`. Health check: `GET /health`.
@@ -269,7 +221,7 @@ The API will be running at `http://localhost:3000`. Health check: `GET /health`.
 
 ### Authentication
 
-All endpoints except `/auth/*` require a Bearer token:
+All endpoints except `/api/auth/*` require a Bearer token:
 ```
 Authorization: Bearer <access_token>
 ```
@@ -284,71 +236,39 @@ Authorization: Bearer nf_live_<api_key>
 #### Auth
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `POST` | `/auth/register` | Create account |
-| `POST` | `/auth/login` | Login — returns JWT + refresh token |
-| `POST` | `/auth/refresh` | Rotate refresh token |
+| `POST` | `/api/auth/register` | Create account |
+| `POST` | `/api/auth/login` | Login — returns JWT + refresh token |
+| `POST` | `/api/auth/refresh` | Rotate refresh token |
 
 #### Workspaces
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `POST` | `/workspaces` | Create workspace |
-| `GET` | `/workspaces` | List your workspaces |
-| `POST` | `/workspaces/:id/api-keys` | Generate scoped API key (shown once) |
+| `POST` | `/api/workspaces` | Create workspace |
+| `GET` | `/api/workspaces` | List your workspaces |
+| `POST` | `/api/workspaces/:id/keys` | Generate scoped API key (shown once) |
 
 #### Templates
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `POST` | `/templates` | Create template |
-| `GET` | `/templates` | List templates in workspace |
-| `PUT` | `/templates/:id` | Update template (auto-increments version) |
+| `POST` | `/api/templates` | Create template |
+| `GET` | `/api/templates` | List templates in workspace |
+| `PUT` | `/api/templates/:id` | Update template (auto-increments version) |
 
 #### Notifications
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `POST` | `/notifications/send` | Send a notification |
-| `GET` | `/notifications/:id` | Get notification + full event trail |
-| `GET` | `/notifications` | List notifications with filters |
+| `POST` | `/api/notifications/send` | Send a notification |
+| `GET` | `/api/notifications` | List notifications with filters |
 
-#### Analytics
+#### Intelligence
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `GET` | `/analytics/:workspaceId/patterns` | Detect failure patterns with AI explanation |
+| `GET` | `/api/intelligence/analyze/:workspaceId` | Detect failure patterns with AI explanation |
 
 #### Provider Webhooks
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `POST` | `/webhooks/resend` | Resend delivery callback |
-| `POST` | `/webhooks/fast2sms` | Fast2SMS status callback |
-
----
-
-## Project Structure
-
-```
-src/
-├── app.ts                        # Express app setup
-├── server.ts                     # Entry point
-├── lib/
-│   └── prisma.ts                 # Prisma client singleton
-├── routes/                       # Route definitions
-├── controllers/                  # Request/response handlers
-├── services/
-│   ├── auth.service.ts           # Auth logic
-│   ├── notification.service.ts   # Notification creation
-│   ├── template.service.ts       # Template rendering
-│   ├── pattern.detector.ts       # Failure pattern detection
-│   └── ai.service.ts             # Gemini API integration
-├── workers/
-│   └── notification.worker.ts    # BullMQ job processor
-├── queues/
-│   └── notification.queue.ts     # Queue definition
-├── middlewares/
-│   ├── auth.middleware.ts        # JWT authentication
-│   └── apikey.middleware.ts      # API key authentication
-└── webhooks/
-    ├── resend.handler.ts         # Resend callback handler
-    └── fast2sms.handler.ts       # Fast2SMS callback handler
-```
+| `POST` | `/api/webhooks/resend` | Resend delivery callback |
 
 ---
 
@@ -358,10 +278,9 @@ I wanted to understand how notification infrastructure works at a systems level 
 
 The pattern detection layer was the core engineering problem. A single failure is noise. A cluster of failures with a shared characteristic — same domain, same provider, same time window — is a signal. Building the rules to reliably distinguish between the two, and then explaining them in context using AI, is what makes NotifyFlow more than a wrapper around Resend and Fast2SMS.
 
-The SMS provider architecture is worth noting: Twilio's DLT registration requirements make it unusable for Indian numbers on a development project. NotifyFlow uses Fast2SMS for Indian delivery and is architected to be provider-agnostic — swapping providers is a one-file change in `sms.service.ts`.
-
 ---
 
 ## License
 
-MIT![alt text](image.png)
+MIT
+```
