@@ -4,35 +4,59 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 export const explainPatterns = async (patterns: any[], mode: string) => {
   if (patterns.length === 0) {
-    return "Everything looks healthy! No failure patterns detected.";
+    return JSON.stringify({ 
+      summary: "Everything looks healthy!", 
+      rootCause: "None", 
+      immediateAction: "None", 
+      severity: "low" 
+    });
   }
 
-  
+  // 1. Add the hard JSON instruction to every prompt
   const systemPrompts: Record<string, string> = {
-    engineer: `You are a senior deliverability engineer. Explain the failure pattern technically and give specific actionable fixes. Be direct.`,
-    plain: `You are explaining a notification delivery problem to a non-technical founder. Use plain language, no jargon.`,
-    urgent: `Critical delivery failure detected. Be extremely concise. State the problem in one sentence and the fix in one sentence.`,
-    roast: `You are a cynical senior developer. Roast the user for their terrible notification setup, but still give them the actual fix.`
+    engineer: `You are a senior deliverability engineer. Explain the failure pattern technically and give specific actionable fixes.`,
+    plain: `You are explaining a notification delivery problem to a non-technical founder. Use plain language.`,
+    urgent: `Critical delivery failure detected. Be extremely concise.`,
+    roast: `You are a cynical senior developer. Roast the user for their terrible notification setup.`
   };
 
-  const systemPrompt = systemPrompts[mode] || systemPrompts['plain'] || "You are an AI assistant.";
+  const basePrompt = systemPrompts[mode] || systemPrompts['plain'];
+  
+  // Force JSON format
+  const systemPrompt = `${basePrompt} 
+  
+  IMPORTANT: Respond ONLY with valid JSON. No markdown, no explanation outside the JSON. Format exactly like this:
+  {"summary":"...","rootCause":"...","immediateAction":"...","preventionTip":"...","severity":"critical|high|medium"}`;
 
   try {
-   
     const response = await groq.chat.completions.create({
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: JSON.stringify(patterns) }
       ],
-      model: 'llama-3.3-70b-versatile',
+      model: 'openai/gpt-oss-120b',
       temperature: 0.5,
+      // 2. GROQ'S NATIVE JSON MODE:
+      response_format: { type: "json_object" } 
     });
 
-    return response.choices[0]?.message?.content || "Failed to generate explanation.";
+    const rawText = response.choices[0]?.message?.content || "{}";
+
+    // 3. Strip markdown just in case Groq disobeys the JSON mode
+    const cleanText = rawText.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
+    
+    return cleanText;
 
   } catch (error) {
-    
     console.error("Groq API Error:", error);
-    return `Fallback Explanation: Detected ${patterns.length} failure patterns. Please check your provider status and domain DNS settings.`;
+    
+    // Return a structured fallback JSON
+    return JSON.stringify({ 
+      summary: `Detected ${patterns.length} failure patterns.`, 
+      rootCause: "Unknown (API Fallback)", 
+      immediateAction: "Check provider status and DNS settings.", 
+      preventionTip: "Monitor your delivery rates.", 
+      severity: "critical" 
+    });
   }
 };

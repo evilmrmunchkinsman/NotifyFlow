@@ -3,11 +3,12 @@ import { createNotification,getNotifications } from './notifications.service';
 import { z } from 'zod';
 
 
-const notificationSchema= z.object({
-    templateId: z.string().min(1),
-    recipient: z.string().min(1),
-    channel:z.enum(['email','sms']),
-    payload:z.record(z.string(),z.any()),
+const notificationSchema = z.object({
+  templateId: z.string().min(1),
+  recipient: z.string().min(1),
+  channel: z.enum(['email', 'sms']),
+  payload: z.object({}).passthrough(),
+  idempotencyKey: z.string().optional(), // <-- ADD THIS
 });
 
 export const sendNotification= async(req:Request, res:Response) =>{

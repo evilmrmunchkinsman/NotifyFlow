@@ -51,6 +51,7 @@ model Template {
 
 model Notification {
   id          String          @id @default(cuid())
+  idempotencyKey String? @unique
   workspaceId String
   templateId  String?
   channel     String

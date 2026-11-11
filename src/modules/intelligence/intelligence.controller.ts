@@ -11,7 +11,8 @@ export const analyzeWorkspace = async (req: Request, res: Response) => {
     const patterns = await detectPatterns(workspaceId);
     
     
-    const explanation = await explainPatterns(patterns, mode);
+    const explanationString = await explainPatterns(patterns, mode);
+const explanation = JSON.parse(explanationString); // Parse it into a real object
     
     return res.status(200).json({
       status: 'success',
