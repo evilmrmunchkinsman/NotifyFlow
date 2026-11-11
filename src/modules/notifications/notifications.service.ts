@@ -19,3 +19,20 @@ export const createNotification= async(workspaceId:string, data:any) =>{
     });
     return notification;
 }
+
+
+export const getNotifications = async (workspaceId: string, status?: string, channel?: string) => {
+  
+  const whereClause: any = { workspaceId: workspaceId };
+  
+  if (status) whereClause.status = status;
+  if (channel) whereClause.channel = channel;
+
+  return prisma.notification.findMany({
+    where: whereClause,
+    orderBy: { createdAt: 'desc' }, // Newest first
+    include: {
+      events: { orderBy: { createdAt: 'desc' } } // Include the audit trail!
+    },
+  });
+};
