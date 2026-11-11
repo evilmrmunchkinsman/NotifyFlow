@@ -30,22 +30,19 @@ Send notifications across email and SMS through one API. Every delivery event is
 ## 📸 Endpoint Screenshots
 
 **1. Sending a Notification (Returns `201 Created` instantly, queue processes in background)**
-<img width="715" height="302" alt="3ca9d35d-d3cb-4ef0-aee8-e4c06a563fa4" src="https://github.com/user-attachments/assets/88066b88-c259-464f-8c30-2bbfb3ae0de4" />
-<img width="704" height="330" alt="c1722a18-5325-4fd7-a999-74133513e828" src="https://github.com/user-attachments/assets/3e539b16-4775-49a5-9f24-343845c81d03" />
 <img width="715" height="358" alt="567a06bd-e410-4bd2-b3ee-3bac40966e23" src="https://github.com/user-attachments/assets/de56f21b-a202-4208-af16-cb482a434bae" />
 <img width="719" height="411" alt="b986d53f-c908-4abc-8b19-9584f6e01bd7" src="https://github.com/user-attachments/assets/9c05ccf5-3c94-4652-9f78-ffbaa60d86aa" />
 <img width="607" height="401" alt="15568a5c-a13a-4e4a-aa85-03c85a6506de" src="https://github.com/user-attachments/assets/f24efe7b-e41d-4029-9aaa-910e9a5a9453" />
-![Send Notification Endpoint](assets/send-endpoint.png)
+
 
 **2. Listing Notifications with Filters (Querying by status)**
 <img width="701" height="666" alt="f16c683f-faa4-41ea-8af1-6a0a86807371" src="https://github.com/user-attachments/assets/540196e8-d367-494b-8577-c557afcd60a3" />
 
-![Get Notifications Endpoint](assets/get-endpoint.png)
+
 
 **3. Intelligence & AI Layer (Roast Mode detecting a bounce cluster)**
 <img width="736" height="654" alt="753d1d4d-852d-4c31-98e8-454248289c26" src="https://github.com/user-attachments/assets/f21052de-3f92-4d54-a1d6-50b2ad07f812" />
 
-![AI Pattern Detection Endpoint](assets/ai-roast.png)
 
 ---
 
